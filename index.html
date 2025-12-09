@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Attractive JavaScript Compiler</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CodeMirror CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/theme/dracula.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        background: #0e0e0e;
+        font-family: "Poppins", sans-serif;
+        color: white;
+      }
+
+      header {
+        background: #1e1e1e;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #00eaff;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .container {
+        display: flex;
+        height: calc(100vh - 70px);
+      }
+
+      .editor-section,
+      .output-section {
+        flex: 1;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .editor-section {
+        border-right: 2px solid #1c1c1c;
+      }
+
+      #editor {
+        height: 80%;
+        border: 1px solid #222;
+      }
+
+      .btn {
+        background: #00eaff;
+        color: black;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 15px;
+        transition: 0.3s;
+      }
+      .btn:hover {
+        background: #00bcd4;
+        transform: scale(1.05);
+      }
+
+      #outputBox {
+        width: 90%;
+        height: 56%;
+        background: #252d33;
+        border: 1px solid #222;
+        padding: 10px;
+        color: #0f0;
+        overflow: auto;
+        white-space: pre-wrap;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>⚡ JavaScript Compiler</header>
+
+    <div class="container">
+      <!-- Editor Section -->
+      <div class="editor-section">
+        <h3>Code Editor</h3>
+        <textarea id="editor">
+// Write your JavaScript code here
+console.log("Hello World!");
+        </textarea>
+        <button class="btn" onclick="runJS()">▶ Run Code</button>
+      </div>
+
+      <!-- Output Section -->
+      <div class="output-section">
+        <h3>Output Console</h3>
+        <div id="outputBox"></div>
+      </div>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/javascript/javascript.min.js"></script>
+
+    <script>
+      // CodeMirror Setup
+      var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        lineNumbers: true,
+        mode: "javascript",
+        theme: "dracula",
+        tabSize: 2,
+      });
+
+      function runJS() {
+        const output = document.getElementById("outputBox");
+        output.innerHTML = ""; // clear old output
+
+        // Capture console.log
+        const oldLog = console.log;
+        console.log = function (message) {
+          output.innerHTML += message + "\n";
+          oldLog.apply(console, arguments);
+        };
+
+        try {
+          new Function(editor.getValue())();
+        } catch (err) {
+          output.innerHTML += "Error: " + err + "\n";
+        }
+
+        console.log = oldLog; // restore
+      }
+    </script>
+  </body>
+</html>
